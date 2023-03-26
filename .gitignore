@@ -49,3 +49,4 @@ Temp*/
 #ignore build log file
 BuildErrors.log
 packages/
+.vs
