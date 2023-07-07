@@ -122,8 +122,9 @@ namespace HelloTexture
                 {
                     new StaticSamplerDescription(ShaderVisibility.Pixel, 0, 0)
                     {
-                        Filter = Filter.MinimumMinMagMipPoint,
+                        Filter = Filter.Anisotropic,
                         AddressUVW = TextureAddressMode.Border,
+                        MaxAnisotropy = 4,
                     }
                 });
 
@@ -143,7 +144,7 @@ namespace HelloTexture
 #endif
 
             // Define the vertex input layout.
-            var inputElementDescs = new []
+            var inputElementDescs = new[]
             {
                     new InputElement("POSITION",0,Format.R32G32B32_Float,0,0),
                     new InputElement("TEXCOORD",0,Format.R32G32_Float,12,0)
@@ -178,7 +179,7 @@ namespace HelloTexture
             float aspectRatio = viewport.Width / viewport.Height;
 
             // Define the geometry for a triangle.
-            var triangleVertices = new []
+            var triangleVertices = new[]
             {
                 new Vertex() { Position = new Vector3(0.0f, 0.25f * aspectRatio, 0.0f ),  TexCoord = new Vector2(0.5f, 0.0f) },
                 new Vertex() { Position = new Vector3(0.25f, -0.25f * aspectRatio, 0.0f), TexCoord = new Vector2(1.0f, 1.0f) },
@@ -220,9 +221,10 @@ namespace HelloTexture
 
             var handle = GCHandle.Alloc(textureData, GCHandleType.Pinned);
             var ptr = Marshal.UnsafeAddrOfPinnedArrayElement(textureData, 0);
+            //将纹理的字节数组写入上传堆
             textureUploadHeap.WriteToSubresource(0, null, ptr, TexturePixelSize * TextureWidth, textureData.Length);
             handle.Free();
-
+            //将数据从上传堆写入默认堆 texture
             commandList.CopyTextureRegion(new TextureCopyLocation(texture, 0), 0, 0, 0, new TextureCopyLocation(textureUploadHeap, 0), null);
 
             commandList.ResourceBarrierTransition(this.texture, ResourceStates.CopyDestination, ResourceStates.PixelShaderResource);
@@ -230,10 +232,10 @@ namespace HelloTexture
             // Describe and create a SRV for the texture.
             var srvDesc = new ShaderResourceViewDescription
             {
-                Shader4ComponentMapping = D3DXUtilities.DefaultComponentMapping(),
+                Shader4ComponentMapping = D3DXUtilities.ComponentMapping(0, 1, 2, 3),
                 Format = textureDesc.Format,
                 Dimension = ShaderResourceViewDimension.Texture2D,
-                Texture2D = {MipLevels = 1},
+                Texture2D = { MipLevels = 1 },
             };
 
             device.CreateShaderResourceView(this.texture, srvDesc, shaderRenderViewHeap.CPUDescriptorHandleForHeapStart);
@@ -324,7 +326,7 @@ namespace HelloTexture
 
             // Indicate that the back buffer will be used as a render target.
             commandList.ResourceBarrierTransition(renderTargets[frameIndex], ResourceStates.Present, ResourceStates.RenderTarget);
-            
+
             var rtvHandle = renderTargetViewHeap.CPUDescriptorHandleForHeapStart;
             rtvHandle += frameIndex * rtvDescriptorSize;
             commandList.SetRenderTargets(rtvHandle, null);
@@ -378,7 +380,7 @@ namespace HelloTexture
             commandQueue.ExecuteCommandList(commandList);
 
             // Present the frame.
-            swapChain.Present(1, 0);
+            swapChain.Present(0, 0);
 
             WaitForPreviousFrame();
         }

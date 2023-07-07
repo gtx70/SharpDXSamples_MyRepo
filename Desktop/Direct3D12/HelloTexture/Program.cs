@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using SharpDX.Windows;
 
 namespace HelloTexture
@@ -24,8 +25,27 @@ namespace HelloTexture
 
                 using (var loop = new RenderLoop(form))
                 {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    var watch = new System.Diagnostics.Stopwatch();
+                    double frequency = System.Diagnostics.Stopwatch.Frequency;
+                    double elapasedTime = 0;
+                    watch.Start();
+
                     while (loop.NextFrame())
                     {
+                        watch.Stop();
+                        double fps = frequency / watch.ElapsedTicks;
+                        elapasedTime += watch.Elapsed.TotalMilliseconds;
+                        // FPS counter interval = 500ms
+                        if (elapasedTime > 100)
+                        {
+                            elapasedTime = 0;
+                            stringBuilder.Clear();
+                            stringBuilder.Append($"Hello Triangle {fps.ToString("f0")} FPS");
+                            form.Text = stringBuilder.ToString();
+                        }
+                        watch.Restart();
+
                         app.Update();
                         app.Render();
                     }

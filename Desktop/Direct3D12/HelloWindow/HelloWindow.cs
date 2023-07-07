@@ -31,6 +31,7 @@ namespace HelloWindow
                 DebugInterface.Get().EnableDebugLayer();
             }
 #endif
+            // 11_0 feature level in DX12 can support GPU down to GeForce 400 series!
             device = new Device(null, SharpDX.Direct3D.FeatureLevel.Level_11_0);
             using (var factory = new Factory4())
             {

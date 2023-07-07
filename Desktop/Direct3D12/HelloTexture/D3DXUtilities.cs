@@ -1,8 +1,9 @@
 ﻿namespace HelloTexture
 {
-    public class D3DXUtilities
+    public static class D3DXUtilities
     {
-        
+        public const int D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING = 0b1011010001000;
+
         public const int ComponentMappingMask = 0x7;
         
         public const int ComponentMappingShift = 3;

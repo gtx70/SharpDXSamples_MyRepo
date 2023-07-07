@@ -80,10 +80,18 @@ namespace HelloTriangle
 
             // Create frame resources.
             var rtvHandle = renderTargetViewHeap.CPUDescriptorHandleForHeapStart;
+            
+            // SRGB rtv
+            var RTVDesc = new RenderTargetViewDescription()
+            {
+                Format = Format.R8G8B8A8_UNorm_SRgb,
+                Dimension = RenderTargetViewDimension.Texture2D
+            };
+
             for (int n = 0; n < FrameCount; n++)
             {
                 renderTargets[n] = swapChain.GetBackBuffer<Resource>(n);
-                device.CreateRenderTargetView(renderTargets[n], null, rtvHandle);
+                device.CreateRenderTargetView(renderTargets[n], RTVDesc, rtvHandle);
                 rtvHandle += rtvDescriptorSize;
             }
 
@@ -258,7 +266,7 @@ namespace HelloTriangle
             commandQueue.ExecuteCommandList(commandList);
 
             // Present the frame.
-            swapChain.Present(1, 0);
+            swapChain.Present(0, 0);
 
             WaitForPreviousFrame();
         }

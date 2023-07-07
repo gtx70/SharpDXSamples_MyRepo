@@ -66,7 +66,7 @@ namespace BipBounceApp
                 int numberOfSamples = bufferSize/waveFormat.BlockAlign;
                 for (int i = 0; i < numberOfSamples; i++)
                 {
-                    float value = (float) (Math.Cos(2*Math.PI*220.0*i/waveFormat.SampleRate)*0.5);
+                    float value = (float) (Math.Cos(2*Math.PI*80000*i/waveFormat.SampleRate)*0.5);
                     dataStream.Write(value);
                 }
                 dataStream.Position = 0;
@@ -87,7 +87,7 @@ namespace BipBounceApp
                 for (int i = 0; i < 1200; i++)
                 {
                     // Rotates the emitter
-                    var rotateEmitter = Matrix.RotationY(i/5.0f);
+                    var rotateEmitter = Matrix.RotationY(i);
                     var newPosition = Vector3.Transform(new Vector3(0, 0, 1000), rotateEmitter);
                     var newPositionVector3 = new Vector3(newPosition.X, newPosition.Y, newPosition.Z);
                     emitter.Velocity = (newPositionVector3 - emitter.Position)/0.05f;
