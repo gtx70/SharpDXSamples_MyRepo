@@ -29,10 +29,12 @@ namespace HelloWorld
         static void Main(string[] args)
         {
             var form = new RenderForm("HelloWorldD3D12");
-
+            form.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            form.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             using (var helloTriangle = new HelloWorld())
             {
                 form.Show();
+                form.SetDesktopBounds(0, 0, 400, 400);
                 helloTriangle.Initialize(form);
 
                 using (var loop = new RenderLoop(form))
